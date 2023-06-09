@@ -26,14 +26,14 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func requestLog(f string, r *http.Request) *logrus.Entry {
 	// TODO Logging: Obtain requestId, correlationId & traceId to the log entry. Uncomment following 3 lines.
-	// rid := getRequestId(r)
-	// cid := getCorrelationId(r)
-	// tid := getTracingId(r)
+	rid := getRequestId(r)
+	cid := getCorrelationId(r)
+	tid := getTracingId(r)
 	return funcLog(f).WithFields(logrus.Fields{
 		// TODO Logging: Add requestId, correlationId & traceId to the log entry. Uncomment following 3 lines.
-		// "requestId":     rid,
-		// "correlationId": cid,
-		// "traceId":       tid,
+		"requestId":     rid,
+		"correlationId": cid,
+		"traceId":       tid,
 	})
 }
 
@@ -76,7 +76,7 @@ func getLogFile() *os.File {
 	if appName != defaultAppName {
 		file = fmt.Sprintf(logFilePattern, appName)
 	}
-	f, err := os.OpenFile(file, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+	f, err := os.OpenFile(file, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		funcLog("getLogFile").Fatalf("log file %s can't be created: %v", logFile, err)
 	}
